@@ -19,10 +19,9 @@ import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 public class PocketSphinx implements RecognitionListener{
 
     //class variables
-    //KeySearch name
-    public static final String KWS = "wakeup";
-    //KeySearch phrase
-    public static final String KEYPHRASE = "ok violet";
+    public static final float KEY_THRESHOLD = 1e-15f;       //KeySearch threshold
+    public static final String KWS = "wakeup";              //KeySearch name
+    public static final String KEYPHRASE = "ok violet";     //KeySearch phrase
 
     //object variables
     private SpeechRecognizer sphinxrec;
@@ -57,7 +56,7 @@ public class PocketSphinx implements RecognitionListener{
 
                     // Threshold to tune for keyphrase to balance between false alarms and misses
                     // Lower for lower false positive count
-                    sphinxSetup.setKeywordThreshold(1e-20f);
+                    sphinxSetup.setKeywordThreshold(KEY_THRESHOLD);
                     sphinxrec = sphinxSetup.getRecognizer();
                     sphinxrec.addKeyphraseSearch(KWS,KEYPHRASE);
                     sphinxrec.addListener(PocketSphinx.this);

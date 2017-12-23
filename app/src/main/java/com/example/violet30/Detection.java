@@ -29,6 +29,7 @@ public class Detection {
         switch(detectionMode){
             case WATCH_DETECT:
                 if(!bluetoothHelper.isConnected()){
+                    main.speak("bluetooth connection not detected, enabling backup voice detection");
                     detectionMode = VOICE_DETECT;
                     PSDetect.startListening();
                 }

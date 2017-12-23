@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -17,7 +18,7 @@ import java.util.UUID;
 /**
  * Created by howardzhang on 11/19/17.
  */
-@TargetApi(18)
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BluetoothHelper implements BLEAction{
 
     //class variables

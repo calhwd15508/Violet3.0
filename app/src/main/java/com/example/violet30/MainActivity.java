@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     //VARIABLES
     //class variables
     private Detection detect;
+    private TTS tts;
 
     //permissions
     public static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
@@ -26,19 +27,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initialize();
+        tts = new TTS(this);
     }
 
-    //ASSIGN VARIABLES
+    //LOADS RESOURCES: called after TextToSpeech initializes
     public void initialize(){
         Log.d("Order", "Initialize");
         checkPermissions();
         detect = new Detection(this);
     }
 
-    //ONLAUNCH
+    //ON LAUNCH: called after PocketSphinx initializes
     public void launch(){
+        tts.speak("VIOLET is online");
         Log.d("Order","Launching");
+        tts.speak("user detection enabled");
         detect.enableDetection();
     }
 
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         detect.destroyDetection();
+        tts.destroy();
         super.onDestroy();
     }
 
@@ -99,13 +103,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //TEXT TO SPEECH CONTROL
+    public void speak(String message){
+        tts.speak(message);
+    }
+
     //DETECTION
     public void detected(){
         detect.disableDetection();
-        Toast.makeText(getApplicationContext(), "Detection Successful!", Toast.LENGTH_SHORT).show();
+        tts.speak("Detected user input");
         if(detect.getDetectionMode() == Detection.VOICE_DETECT){
+            tts.speak("Watch Detection enabled");
             detect.watchDetect();
         }else{
+            tts.speak("Voice Detection enabled");
             detect.voiceDetect();
         }
         detect.enableDetection();
