@@ -9,18 +9,20 @@ import android.util.Log;
 public class Detection {
 
     //static variables
-    public final static int WATCH_DETECT = 1;
-    public final static int VOICE_DETECT = 2;
+    private final static int WATCH_DETECT = 1;
+    private final static int VOICE_DETECT = 2;
 
     //object variables
     private PocketSphinx PSDetect;
     private BluetoothHelper bluetoothHelper;
     private MainActivity main;
+    private Initialization init;
     private int detectionMode = WATCH_DETECT;
 
-    public Detection(MainActivity main){
+    public Detection(MainActivity main, Initialization init){
         this.main = main;
-        PSDetect = new PocketSphinx(this.main);
+        this.init = init;
+        PSDetect = new PocketSphinx(this.main, this.init);
         bluetoothHelper = new BluetoothHelper(this.main);
     }
 
@@ -29,7 +31,7 @@ public class Detection {
         switch(detectionMode){
             case WATCH_DETECT:
                 if(!bluetoothHelper.isConnected()){
-                    main.speak("bluetooth connection not detected, enabling backup voice detection");
+                    main.ttsRequest("bluetooth connection not detected, enabling backup voice detection");
                     detectionMode = VOICE_DETECT;
                     PSDetect.startListening();
                 }
@@ -63,7 +65,11 @@ public class Detection {
 
     //releases detection resources
     public void destroyDetection(){
-        PSDetect.destroy();
-        bluetoothHelper.destroy();
+        if(PSDetect != null) {
+            PSDetect.destroy();
+        }
+        if(bluetoothHelper != null) {
+            bluetoothHelper.destroy();
+        }
     }
 }

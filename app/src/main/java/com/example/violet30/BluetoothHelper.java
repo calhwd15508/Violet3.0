@@ -22,8 +22,8 @@ import java.util.UUID;
 public class BluetoothHelper implements BLEAction{
 
     //class variables
-    public static final UUID UUID_SERVICE_MIBAND2_SERVICE = UUID.fromString("0000fee0-0000-1000-8000-00805f9b34fb");
-    public static final UUID UUID_BUTTON_TOUCH = UUID.fromString("00000010-0000-3512-2118-0009af100700");
+    private static final UUID UUID_SERVICE_MIBAND2_SERVICE = UUID.fromString("0000fee0-0000-1000-8000-00805f9b34fb");
+    private static final UUID UUID_BUTTON_TOUCH = UUID.fromString("00000010-0000-3512-2118-0009af100700");
 
     //object variables
     private MainActivity main;

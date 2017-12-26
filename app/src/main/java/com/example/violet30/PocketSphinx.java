@@ -19,16 +19,18 @@ import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 public class PocketSphinx implements RecognitionListener{
 
     //class variables
-    public static final float KEY_THRESHOLD = 1e-15f;       //KeySearch threshold
-    public static final String KWS = "wakeup";              //KeySearch name
-    public static final String KEYPHRASE = "ok violet";     //KeySearch phrase
+    private static final float KEY_THRESHOLD = 1e-15f;       //KeySearch threshold
+    private static final String KWS = "wakeup";              //KeySearch name
+    private static final String KEYPHRASE = "ok violet";     //KeySearch phrase
 
     //object variables
     private SpeechRecognizer sphinxrec;
     private MainActivity main;
+    private Initialization init;
 
-    public PocketSphinx(MainActivity main){
+    public PocketSphinx(MainActivity main, Initialization init){
         this.main = main;
+        this.init = init;
         runSphinxSetup();
     }
 
@@ -73,7 +75,7 @@ public class PocketSphinx implements RecognitionListener{
                 if (result != null) {
                     main.error("PocketSphinx Setup Error: " + result.getMessage());
                 }
-                main.launch();
+                init.detectSetup();
             }
         }.execute();
     }

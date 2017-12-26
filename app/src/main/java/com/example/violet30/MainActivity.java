@@ -12,9 +12,12 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     //VARIABLES
-    //class variables
-    private Detection detect;
+    //object variables
+    private Initialization init;
+    private QueueManager queue;
     private TTS tts;
+    private Detection detect;
+    private GoogleSpeechRecognition googlerec;
 
     //permissions
     public static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
@@ -27,30 +30,37 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tts = new TTS(this);
+        initialize();
     }
 
-    //LOADS RESOURCES: called after TextToSpeech initializes
+    //LOADS RESOURCES: constructs needed objects
     public void initialize(){
         Log.d("Order", "Initialize");
         checkPermissions();
-        detect = new Detection(this);
+        init = new Initialization(this);
     }
 
-    //ON LAUNCH: called after PocketSphinx initializes
+    /*ON LAUNCH: called by Initialization class after needed objects are constructed
+        creates queue when launching
+     */
     public void launch(){
-        tts.speak("VIOLET is online");
         Log.d("Order","Launching");
-        tts.speak("user detection enabled");
-        detect.enableDetection();
+        detect = init.getDetection();
+        tts = init.getTts();
+        googlerec = init.getGooglerec();
+        queue = new QueueManager(this);
+        ttsRequest("Initialization complete.");
+        ttsRequest("VIOLET is online.");
+        detRequest();
     }
 
     //DESTROY
     //unlocks all program resources
     @Override
     protected void onDestroy() {
-        detect.destroyDetection();
-        tts.destroy();
+        if(queue != null){
+            queue.destroy();
+        }
         super.onDestroy();
     }
 
@@ -103,22 +113,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //TEXT TO SPEECH CONTROL
-    public void speak(String message){
-        tts.speak(message);
+    //QUEUE CONTROL
+    public void removeNode(){
+        queue.removeNode();
     }
-
-    //DETECTION
+    public void ttsRequest(String message){
+        queue.addNode(QueueManager.TTS_REQUEST, message);
+    }
+    public void gsRequest(){
+        queue.addNode(QueueManager.GS_REQUEST, null);
+    }
+    public void detRequest(){
+        queue.addNode(QueueManager.DET_REQUEST, null);
+    }
+    //run when detection occurs
     public void detected(){
         detect.disableDetection();
-        tts.speak("Detected user input");
-        if(detect.getDetectionMode() == Detection.VOICE_DETECT){
-            tts.speak("Watch Detection enabled");
-            detect.watchDetect();
-        }else{
-            tts.speak("Voice Detection enabled");
-            detect.voiceDetect();
-        }
-        detect.enableDetection();
+        gsRequest();
+        removeNode();
+    }
+
+    //RESOURCE ACCESS METHODS
+    public Detection getDetection(){
+        return detect;
+    }
+    public GoogleSpeechRecognition getGooglerec(){
+        return googlerec;
+    }
+    public TTS getTts(){
+        return tts;
     }
 }
