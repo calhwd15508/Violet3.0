@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "490180251108",
+    "firebase_url": "https://violetv3-6d2f4.firebaseio.com",
+    "project_id": "violetv3-6d2f4",
+    "storage_bucket": "violetv3-6d2f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490180251108:android:694f6369dd1f918a",
+        "android_client_info": {
+          "package_name": "com.example.violet30"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490180251108-uhpssg8spe43l1cs9oakcgi6u12gpejt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.violet30",
+            "certificate_hash": "398bbf1f252bc8278b1221a660616611dbccb7e3"
+          }
+        },
+        {
+          "client_id": "490180251108-hhcf1lh4jubupltpc5tkcvpsact5iq3l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD1woga9iqiwHSUPmWa0zr47uf2qIKhxY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490180251108-hhcf1lh4jubupltpc5tkcvpsact5iq3l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.example.violet30;
+package com.example.IO;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -10,6 +10,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 //Listener interface for Bluetooth
 public interface BLEAction {
     void onDisconnect();
+
     void onConnect();
+
     void onNotification(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic);
 }

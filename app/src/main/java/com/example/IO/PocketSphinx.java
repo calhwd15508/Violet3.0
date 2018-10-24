@@ -1,7 +1,8 @@
-package com.example.violet30;
+package com.example.IO;
 
 import android.os.AsyncTask;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,21 +17,40 @@ import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
  * Created by howardzhang on 11/2/17.
  */
 
-public class PocketSphinx implements RecognitionListener{
+/*
+Handles voice detection with PocketSphinx api
+works with detection for voice keyword detection
+ */
+public class PocketSphinx implements RecognitionListener {
 
-    //class variables
-    private static final float KEY_THRESHOLD = 1e-15f;       //KeySearch threshold
+    /*
+    threshold
+    larger -> harder to detect, use for smaller keywords
+    smaller -> easier to detect, use for larger keywords
+    max: 1
+    min: 1e-50
+     */
+    private static final float KEY_THRESHOLD = 1e-5f;       //KeySearch threshold
+    //keyword key
     private static final String KWS = "wakeup";              //KeySearch name
-    private static final String KEYPHRASE = "ok violet";     //KeySearch phrase
+    //keyword value used for voice detection
+    private static final String KEYPHRASE = "violet";     //KeySearch phrase
 
-    //object variables
+    //reference to PocketSphinx api SpeechRecognizer object
     private SpeechRecognizer sphinxrec;
-    private MainActivity main;
-    private Initialization init;
+    //reference to IOManager
+    private IOManager managerIO;
+    //reference to Asynchronous TaskData to setup pocket sphinx
+    private AsyncTask sphinxSetup;
+    //handler object to execute on main thread
+    private Handler handler;
 
-    public PocketSphinx(MainActivity main, Initialization init){
-        this.main = main;
-        this.init = init;
+    //constructor
+    public PocketSphinx(IOManager managerIO) {
+        //setup
+        this.managerIO = managerIO;
+        handler = new Handler(Looper.getMainLooper());
+        //start asynchronous setup
         runSphinxSetup();
     }
 
@@ -42,15 +62,16 @@ public class PocketSphinx implements RecognitionListener{
      *      Default Acoustic Model
      *      Default English Dictionary Model*/
 
-    private void runSphinxSetup(){
-        Log.d("Order", "Running sphinx setup");
-        //Sets up PocketSphinx
-        new AsyncTask<Void, Void, Exception>(){
+    private void runSphinxSetup() {
+        /*Sets up PocketSphinx
+        Asynchronous -> parallel setup handled by AsynchronousInit
+         */
+        sphinxSetup = new AsyncTask<Void, Void, Exception>() {
             @Override
             protected Exception doInBackground(Void... params) {
-                try{
+                try {
                     //Brings in PocketSphinx resources
-                    Assets assets = new Assets(main);
+                    Assets assets = new Assets(managerIO.getMain());
                     File assetDir = assets.syncAssets();
                     SpeechRecognizerSetup sphinxSetup = SpeechRecognizerSetup.defaultSetup();
                     sphinxSetup.setAcousticModel(new File(assetDir, "en-us-ptm"));
@@ -60,22 +81,25 @@ public class PocketSphinx implements RecognitionListener{
                     // Lower for lower false positive count
                     sphinxSetup.setKeywordThreshold(KEY_THRESHOLD);
                     sphinxrec = sphinxSetup.getRecognizer();
-                    sphinxrec.addKeyphraseSearch(KWS,KEYPHRASE);
+                    sphinxrec.addKeyphraseSearch(KWS, KEYPHRASE);
                     sphinxrec.addListener(PocketSphinx.this);
 
-                }catch(IOException e){
+                } catch (IOException e) {
                     return e;
                 }
                 return null;
             }
+
             @Override
-            //Starts Keyword Search or displays error
+            /*executes after setup
+            successful -> informs AsynchronousInit
+            error -> informs IOManager
+             */
             protected void onPostExecute(Exception result) {
-                Log.d("Order", "Finishing sphinx setup");
                 if (result != null) {
-                    main.error("PocketSphinx Setup Error: " + result.getMessage());
+                    managerIO.error("PocketSphinx Setup Error: " + result.getMessage());
                 }
-                init.detectSetup();
+                managerIO.getMain().psSetup();
             }
         }.execute();
     }
@@ -84,28 +108,43 @@ public class PocketSphinx implements RecognitionListener{
     //Checks for keyword, runs main.detected() if detected
     @Override
     public void onPartialResult(Hypothesis hypothesis) {
-        if(hypothesis == null){
+        if (hypothesis == null) {
             return;
         }
-        if(hypothesis.getHypstr().equals(KEYPHRASE)){
-            main.detected();
+        if (hypothesis.getHypstr().equals(KEYPHRASE)) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    managerIO.detected();
+                }
+            });
         }
     }
-    //handles detection errors
+
+    //handles detection errors, informs IOManager
     @Override
-    public void onError(Exception e) {
-        main.error("PocketSphinx Detection Error: " + e.getMessage());
+    public void onError(final Exception e) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                managerIO.error("PocketSphinx Detection Error: " + e.getMessage());
+            }
+        });
     }
+
     //unused implementation methods
     @Override
     public void onBeginningOfSpeech() {
     }
+
     @Override
     public void onEndOfSpeech() {
     }
+
     @Override
     public void onResult(Hypothesis hypothesis) {
     }
+
     @Override
     public void onTimeout() {
     }
@@ -113,22 +152,29 @@ public class PocketSphinx implements RecognitionListener{
 
     //Detection Control Functions
     //restarts the keyword search
-    public void restartKeySearch(){
+    public void restartKeySearch() {
         sphinxrec.cancel();
         sphinxrec.startListening(KWS);
     }
+
     //starts keyword search
-    public void startListening(){
+    public void startListening() {
         sphinxrec.startListening(KWS);
     }
+
     //cancels keyword search
-    public void cancel(){
+    public void cancel() {
         sphinxrec.cancel();
     }
+
     //unlocks resources
-    public void destroy(){
+    public void destroy() {
         if (sphinxrec != null) {
+            if(sphinxSetup != null){
+                sphinxSetup.cancel(true);
+            }
             sphinxrec.cancel();
+            sphinxrec.removeListener(this);
             sphinxrec.shutdown();
         }
     }

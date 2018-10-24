@@ -4,15 +4,119 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/background"
     tools:context="com.example.violet30.MainActivity">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="64dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="64dp"
+        android:text="Violet"
+        android:textSize="46sp"
+        android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="78dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="24dp"
+        android:lines="4"
+        android:text="Detect:\tWatch\nDisplay:\tOn\nTesting:\tOff"
+        android:textColor="#ABC7D1"
+        android:textSize="10sp"
+        android:visibility="invisible"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="143dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp">
+
+        <com.example.visualizer.VisualizerView
+            android:id="@+id/visualizerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/testToggleOn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginStart="36dp"
+        android:text="Testing"
+        android:visibility="invisible"
+        android:background="@drawable/buttonbackground"
+        android:textColor="#ABC7D1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/testingMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/testToggleOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/buttonbackground"
+                android:textColor="#ABC7D1"
+                android:text="Off" />
+
+            <Button
+                android:id="@+id/testButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="125dp"
+                android:text="Test"
+                android:background="@drawable/buttonbackground"
+                android:textColor="#ABC7D1"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/testText"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Type commands here..."
+            android:inputType="textPersonName"
+            android:visibility="visible"
+            android:textColor="#ABC7D1"
+            android:textColorHint="#4E6E82"/>
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

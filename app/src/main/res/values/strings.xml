@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Violet3.0</string>
+    <string name="test_toggle">Test Mode</string>
 </resources>
